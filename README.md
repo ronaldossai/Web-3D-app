@@ -15,8 +15,4 @@ A 3D web application featuring interactive models of a gaming controller, smartp
 - PHP/SQLite
 - Bootstrap
 
-## Setup
-[Setup instructions will go here]
 
-## Development
-[Development instructions will go here]
