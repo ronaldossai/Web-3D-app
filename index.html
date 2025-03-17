@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CTRL+LIFE | Your Digital Man Cave</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- 8-bit style font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <!-- Three.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+    
+    <!-- OrbitControls for camera manipulation -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- GLTFLoader for 3D models -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body class="dark-theme">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand ctrl-life-title" href="#">CTRL+<span class="brand-highlight"><span class="letter-l">L</span><span class="letter-i">I</span><span class="letter-f">F</span><span class="letter-e">E</span></span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.html" data-page="home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-page="about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="items.html" data-page="models">Models</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html" data-page="contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home-page">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="assets\11066399-uhd_3840_2160_30fps.mp4" type="video/mp4">
+            <!-- Fallback for browsers that don't support video -->
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-text">
+            <h1 class="ctrl-life-title">CTRL+<span class="brand-highlight"><span class="letter-l">L</span><span class="letter-i">I</span><span class="letter-f">F</span><span class="letter-e">E</span></span></h1>
+            <p class="lead">Your Ultimate Digital Man Cave Experience</p>
+            <a href="items.html" class="btn btn-primary btn-lg explore-btn" id="explore-models">Explore Models</a>
+        </div>
+    </section>
+
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
+        <source src="assets\kugelsicher-by-tremoxbeatz-302838.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Play Button -->
+    <button id="play-button" class="btn btn-primary">
+        <i class="fas fa-play"></i>
+    </button>
+
+    <!-- Mute/Unmute Button -->
+    <button id="mute-button" class="btn btn-primary">
+        <i class="fas fa-volume-up"></i><span></span>
+    </button>
+
+    <!-- Include External JavaScript -->
+    <script src="script.js"></script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="ctrl-life-title">CTRL+<span class="brand-highlight"><span class="letter-l">L</span><span class="letter-i">I</span><span class="letter-f">F</span><span class="letter-e">E</span></span></h4>
+                    <p>Your Digital Man Cave Experience</p>
+                    <p>&copy; 2025 CTRL+LIFE. All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                    <p class="mt-2">
+                        <a href="about.html" data-page="about">About</a> | 
+                        <a href="items.html" data-page="models">Models</a> | 
+                        <a href="contact.html" data-page="contact">Contact</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Link to custom JavaScript files -->
+    <script src="main.js"></script>
+
+</body>
+</html>

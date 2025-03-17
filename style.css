@@ -1,0 +1,475 @@
+/* Main Theme Colors */
+:root {
+    --primary-color: #6C44FC;
+    --secondary-color: #D62F0B;
+    --bg-dark: #121212;
+    --bg-darker: #0a0a0a;
+    --text-light: #f8f9fa;
+    --text-grey: #adb5bd;
+    --accent-blue: #44A6FC;
+    --accent-green: #44FCA2;
+    --button-red: #FF0000;
+    --button-yellow: #FFFF00;
+    --button-green: #00FF00;
+    --button-blue: #0000FF;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Press Start 2P', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px; /* Adjust this value as needed */
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: rgba(10, 10, 10, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+}
+
+.brand-highlight {
+    color: var(--primary-color);
+}
+.brand-highlight .letter-l { color: var(--button-red); }
+.brand-highlight .letter-i { color: var(--button-yellow); }
+.brand-highlight .letter-f { color: var(--button-green); }
+.brand-highlight .letter-e { color: var(--button-blue); }
+
+.nav-link {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://source.unsplash.com/1600x900/?gaming,technology') no-repeat center center/cover;
+    height: calc(100vh - 76px);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    z-index: -1; 
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); 
+    z-index: -1;
+}
+
+.hero-text {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 700px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(108, 68, 252, 0.3);
+}
+
+.hero-text h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.hero-text p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.explore-btn {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.explore-btn:hover {
+    background-color: var(--accent-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 3D Canvas container */
+#3dCanvas {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-darker);
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+#3dCanvas canvas {
+    display: block;
+}
+
+/* Model Selection Panel */
+.model-selection {
+    background-color: rgba(20, 20, 20, 0.7);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+    background-color: var(--bg-darker);
+    color: var(--text-light);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: rgba(108, 68, 252, 0.2);
+}
+
+.list-group-item.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Button Styling */
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.light-color {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.light-color:hover, .light-color.active {
+    transform: scale(1.1);
+    border-color: white;
+}
+
+/* Model Info Section */
+.model-specs {
+    background-color: rgba(20, 20, 20, 0.7);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+}
+
+.model-specs h4 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.model-specs ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.model-specs li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.model-specs li:last-child {
+    border-bottom: none;
+}
+
+#model-info {
+    background-color: rgba(20, 20, 20, 0.7);
+    padding: 1rem;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+#model-title {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+#model-description {
+    color: var(--text-grey);
+    margin-bottom: 0;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--bg-darker);
+    color: var(--text-light);
+    padding: 2rem 0;
+    margin-top: 0;
+}
+
+.footer a {
+    color: var(--text-grey);
+    margin: 0 0.5rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--primary-color);
+}
+
+.social-links {
+    margin-bottom: 1rem;
+}
+
+.social-links a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    margin: 0 0.3rem;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+}
+
+/* About and Contact Pages */
+.content-section {
+    min-height: 80vh;
+    padding-top: 5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .hero-text h1 {
+        font-size: 3rem;
+    }
+    
+    #3dCanvas {
+        height: 400px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .model-selection {
+        margin-bottom: 2rem;
+    }
+    
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+    
+    #3dCanvas {
+        height: 350px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-text {
+        padding: 1.5rem;
+    }
+    
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+    
+    .social-links a {
+        width: 35px;
+        height: 35px;
+        line-height: 35px;
+    }
+}
+
+/* Additional styles for contact page */
+.contact-info-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    background-color: rgba(20, 20, 20, 0.7);
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(108, 68, 252, 0.2);
+}
+
+.contact-info-card i {
+    color: var(--primary-color);
+}
+
+/* Form elements styling */
+.form-control, .form-select {
+    background-color: rgba(30, 30, 30, 0.8);
+    border: 1px solid rgba(108, 68, 252, 0.3);
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: rgba(40, 40, 40, 0.8);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(108, 68, 252, 0.25);
+    color: var(--text-light);
+}
+
+/* Loading indicator for 3D models */
+.loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 0;
+}
+
+/* Style for cards on about page */
+.card {
+    background-color: rgba(20, 20, 20, 0.7);
+    border: 1px solid rgba(108, 68, 252, 0.3);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(108, 68, 252, 0.2);
+}
+
+.card-title {
+    color: var(--primary-color);
+}
+
+/* Style for music */
+#music-toggle {
+    margin-left: 10px;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+#music-toggle:hover {
+    background-color: rgba(108, 68, 252, 0.2);
+    transform: scale(1.1);
+}
+
+#music-toggle.playing {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Styling for audio controls */
+#play-button, #mute-button {
+    position: fixed;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    background-color: var(--primary-color);
+    border: none;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+#play-button {
+    bottom: 20px;
+    right: 80px; /* Position to the left of mute button */
+}
+
+#mute-button {
+    bottom: 20px;
+    right: 20px;
+}
+
+#play-button:hover, #mute-button:hover {
+    transform: scale(1.1);
+    background-color: var(--accent-blue);
+}
+
+#play-button i, #mute-button i {
+    font-size: 1.2rem;
+}
+
+/* For small screens, make buttons slightly smaller */
+@media (max-width: 767.98px) {
+    #play-button, #mute-button {
+        width: 40px;
+        height: 40px;
+    }
+    
+    #play-button i, #mute-button i {
+        font-size: 1rem;
+    }
+}
+
+/* For small screens, show only the icon */
+@media (max-width: 767.98px) {
+    #mute-button {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+    }
+    
+    #mute-button i {
+        margin-right: 0;
+        font-size: 1rem;
+    }
+    
+    #mute-button span {
+        display: none;
+    }
+}
+
+.ctrl-life-title {
+    font-family: 'Press Start 2P', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5rem;
+}

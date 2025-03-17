@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>3D Models | CTRL+LIFE</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+     <!-- 8-bit style font -->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <!-- Three.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+    
+    <!-- OrbitControls for camera manipulation -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- GLTFLoader for 3D models -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body class="dark-theme">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">CTRL+<span class="brand-highlight"><span class="letter-l">L</span><span class="letter-i">I</span><span class="letter-f">F</span><span class="letter-e">E</span></span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-page="home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-page="about">About</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="items.html" data-page="models">Models</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html" data-page="contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 3D Models Section -->
+    <section class="container-fluid py-5 content-section" id="models-page">
+        <div class="row">
+            <!-- Model Selection Panel -->
+            <div class="col-md-3 model-selection">
+                <h3 class="text-center mb-4">Select Model</h3>
+                <div class="list-group">
+                    <button type="button" class="list-group-item list-group-item-action active" data-model="laptop">
+                        <i class="fas fa-laptop me-2"></i> Lenovo Legion 5
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action" data-model="controller">
+                        <i class="fas fa-gamepad me-2"></i> Xbox Controller
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action" data-model="phone">
+                        <i class="fas fa-mobile-alt me-2"></i> iPhone 15
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action" data-model="coke">
+                        <i class="fas fa-wine-bottle me-2"></i> Coke Bottle
+                    </button>
+                </div>
+                
+                <h4 class="mt-4 mb-3">Controls</h4>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" id="toggle-wireframe">
+                        <i class="fas fa-vector-square me-2"></i> Toggle Wireframe
+                    </button>
+                    <button class="btn btn-outline-primary" id="toggle-rotation">
+                        <i class="fas fa-sync-alt me-2"></i> Toggle Rotation
+                    </button>
+                    <button class="btn btn-outline-primary" id="reset-camera">
+                        <i class="fas fa-video me-2"></i> Reset Camera
+                    </button>
+                </div>
+                
+                <h4 class="mt-4 mb-3">Lighting</h4>
+                <div class="mb-3">
+                    <label for="light-intensity" class="form-label">Intensity: <span id="intensity-value">1.0</span></label>
+                    <input type="range" class="form-range" id="light-intensity" min="0" max="2" step="0.1" value="1">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Light Color</label>
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm light-color" data-color="#ffffff" style="background-color: #ffffff;"></button>
+                        <button class="btn btn-sm light-color" data-color="#ff5555" style="background-color: #ff5555;"></button>
+                        <button class="btn btn-sm light-color" data-color="#55ff55" style="background-color: #55ff55;"></button>
+                        <button class="btn btn-sm light-color" data-color="#5555ff" style="background-color: #5555ff;"></button>
+                        <button class="btn btn-sm light-color" data-color="#ffff55" style="background-color: #ffff55;"></button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3D Canvas -->
+            <div class="col-md-9">
+                <div id="model-info" class="mb-3">
+                    <h2 id="model-title">Lenovo Legion 5</h2>
+                    <p id="model-description">A powerful gaming laptop featuring AMD Ryzen processors and NVIDIA GeForce RTX graphics.</p>
+                </div>
+                <div id="3dCanvas">
+                    <!-- Three.js will render here -->
+                    <div class="loading-indicator">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading 3D Model...</p>
+                    </div>
+                </div>
+                <div class="model-specs mt-3">
+                    <div class="row" id="laptop-specs">
+                        <div class="col-md-6">
+                            <h4>Specifications</h4>
+                            <ul>
+                                <li>AMD Ryzen 7 5800H Processor</li>
+                                <li>NVIDIA GeForce RTX 3060</li>
+                                <li>16GB DDR4 RAM</li>
+                                <li>1TB SSD Storage</li>
+                                <li>15.6" FHD 165Hz Display</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Features</h4>
+                            <ul>
+                                <li>Nahimic 3D Audio</li>
+                                <li>RGB Backlit Keyboard</li>
+                                <li>Coldfront 3.0 Cooling</li>
+                                <li>Legion TrueStrike Keyboard</li>
+                                <li>Rapid Charge Pro</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row" id="controller-specs" style="display:none;">
+                        <div class="col-md-6">
+                            <h4>Specifications</h4>
+                            <ul>
+                                <li>Wireless Connectivity</li>
+                                <li>Bluetooth 5.0</li>
+                                <li>40+ Hour Battery Life</li>
+                                <li>USB-C Charging</li>
+                                <li>Textured Grip Surface</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Features</h4>
+                            <ul>
+                                <li>Impulse Triggers</li>
+                                <li>Hybrid D-pad</li>
+                                <li>Button Mapping</li>
+                                <li>Low Latency Input</li>
+                                <li>Compatible with PC & Xbox</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row" id="phone-specs" style="display:none;">
+                        <div class="col-md-6">
+                            <h4>Specifications</h4>
+                            <ul>
+                                <li>A16 Bionic Chip</li>
+                                <li>6.1" Super Retina XDR Display</li>
+                                <li>128GB/256GB/512GB Storage</li>
+                                <li>Ceramic Shield Front</li>
+                                <li>IP68 Water Resistance</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Features</h4>
+                            <ul>
+                                <li>48MP Main Camera</li>
+                                <li>Action Mode Video</li>
+                                <li>All-Day Battery Life</li>
+                                <li>MagSafe Compatibility</li>
+                                <li>Emergency SOS via Satellite</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row" id="coke-specs" style="display:none;">
+                        <div class="col-md-6">
+                            <h4>Specifications</h4>
+                            <ul>
+                                <li>500ml Capacity</li>
+                                <li>PET Plastic Bottle</li>
+                                <li>Resealable Cap</li>
+                                <li>Ergonomic Design</li>
+                                <li>Iconic Contour Shape</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Features</h4>
+                            <ul>
+                                <li>Classic Cola Flavor</li>
+                                <li>Carbonated Refreshment</li>
+                                <li>Caffeine Content: 34mg/330ml</li>
+                                <li>Zero Sugar Option Available</li>
+                                <li>Recyclable Packaging</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>CTRL+<span class="brand-highlight"><span class="letter-l">L</span><span class="letter-i">I</span><span class="letter-f">F</span><span class="letter-e">E</span></span></h4>
+                    <p>Your Digital Man Cave Experience</p>
+                    <p>&copy; 2025 CTRL+LIFE. All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                    <p class="mt-2">
+                        <a href="about.html" data-page="about">About</a> | 
+                        <a href="items.html" data-page="models">Models</a> | 
+                        <a href="contact.html" data-page="contact">Contact</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Link to custom JavaScript files -->
+    <script src="main.js"></script>
+
+</body>
+</html>
