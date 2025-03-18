@@ -58,7 +58,7 @@ body {
 /* Hero Section */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://source.unsplash.com/1600x900/?gaming,technology') no-repeat center center/cover;
-    height: calc(100vh - 76px);
+    height: calc(80vh - 76px);
     position: relative;
     display: flex;
     align-items: center;
@@ -472,4 +472,9 @@ body {
 .ctrl-life-title {
     font-family: 'Press Start 2P', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 1.5rem;
+}
+
+.ctrl-life-footer-title {
+    font-family: 'Press Start 2P', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
 }
