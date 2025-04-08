@@ -27,36 +27,214 @@
     
     <!-- GLTFLoader for 3D models -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/loaders/GLTFLoader.js"></script>
+    
+    <style>
+        /* Additional styles for the redesigned home page */
+        .minimal-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 15px 0;
+            text-align: center;
+            background-color: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .minimal-nav a {
+            color: #ccc;
+            margin: 0 15px;
+            text-decoration: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        
+        .minimal-nav a:hover, .minimal-nav a.active {
+            color: #00ff00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .console-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 900px;
+            height: 60vh;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            overflow: hidden;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .console-header {
+            width: 100%;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: #00ff00;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .console-body {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #logo-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+        
+        .console-footer {
+            width: 100%;
+            border-top: 1px solid #00ff00;
+            padding-top: 10px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .media-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-icons a {
+            color: #00ff00;
+            font-size: 1.2rem;
+            transition: transform 0.3s, text-shadow 0.3s;
+        }
+        
+        .social-icons a:hover {
+            transform: scale(1.2);
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+        }
+        
+        .console-typing {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: #00ff00;
+        }
+        
+        #play-button, #mute-button {
+            background-color: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            margin-left: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        #play-button:hover, #mute-button:hover {
+            background-color: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+        
+        .copyright {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #444;
+        }
+        
+        .hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+        }
+    </style>
 </head>
 <body class="dark-theme">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand ctrl-life-title" href="index.html">CTRL+<span class="brand-highlight"><span class="letter-l">L</span><span class="letter-i">I</span><span class="letter-f">F</span><span class="letter-e">E</span></span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="index.html" data-page="home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html" data-page="about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="items.html" data-page="models">Models</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contact.html" data-page="contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
+    <!-- Minimal Navigation -->
+    <nav class="minimal-nav">
+        <a href="index.html" class="active">Home</a>
+        <a href="about.html">About</a>
+        <a href="items.html">Models</a>
+        <a href="contact.html">Contact</a>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home-page">
+    <!-- Hero Section (Background Video) -->
+    <section class="hero">
         <video class="hero-video" autoplay muted loop playsinline>
             <source src="assets\11066399-uhd_3840_2160_30fps.mp4" type="video/mp4">
             <!-- Fallback for browsers that don't support video -->
             Your browser does not support the video tag.
         </video>
-      
     </section>
+    
+    <!-- Console Container -->
+    <div class="console-container">
+        <div class="console-header">
+            <span>> System.initialize()</span>
+            <span id="datetime">loading...</span>
+        </div>
+        
+        <div class="console-body">
+            <div id="logo-container">
+                <!-- Three.js logo will be rendered here -->
+            </div>
+        </div>
+        
+        <div class="console-typing" id="typing-text">
+            > Welcome to CTRL+LIFE, your digital man cave
+        </div>
+        
+        <div class="console-footer">
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <div class="copyright">&copy; 2025 CTRL+LIFE</div>
+        </div>
+    </div>
+
+    <!-- Media Controls -->
+    <div class="media-controls">
+        <button id="play-button">
+            <i class="fas fa-play"></i>
+        </button>
+        <button id="mute-button">
+            <i class="fas fa-volume-up"></i>
+        </button>
+    </div>
 
     <!-- Background Music -->
     <audio id="bg-music" loop>
@@ -64,53 +242,76 @@
         Your browser does not support the audio element.
     </audio>
 
-    <!-- Play Button -->
-    <button id="play-button" class="btn btn-primary">
-        <i class="fas fa-play"></i>
-    </button>
-
-    <!-- Mute/Unmute Button -->
-    <button id="mute-button" class="btn btn-primary">
-        <i class="fas fa-volume-up"></i><span></span>
-    </button>
-
-    <!-- Include External JavaScript -->
-    <script src="script.js"></script>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h4 class="ctrl-life-footer-title">CTRL+<span class="brand-highlight"><span class="letter-l">L</span><span class="letter-i">I</span><span class="letter-f">F</span><span class="letter-e">E</span></span></h4>
-                    <p>Your Digital Man Cave Experience</p>
-                    <p>&copy; 2025 CTRL+LIFE. All Rights Reserved.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-github"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                    <p class="mt-2">
-                        <a href="about.html" data-page="about">About</a> | 
-                        <a href="items.html" data-page="models">Models</a> | 
-                        <a href="contact.html" data-page="contact">Contact</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Link to custom JavaScript files -->
-    <script src="main.js"></script>
-
     <!-- Three.js LOGO -->
     <script src="hero-title.js"></script>
+    
+    <!-- Updated Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update datetime
+            function updateDateTime() {
+                const now = new Date();
+                const date = now.toLocaleDateString('en-GB');
+                const time = now.toLocaleTimeString('en-GB');
+                document.getElementById('datetime').textContent = `${date} ${time}`;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // Typing effect
+            const typingTextElement = document.getElementById('typing-text');
+            const welcomeText = typingTextElement.textContent;
+            typingTextElement.textContent = '';
+            
+            let i = 0;
+            const typingInterval = setInterval(() => {
+                if (i < welcomeText.length) {
+                    typingTextElement.textContent += welcomeText.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typingInterval);
+                    setTimeout(() => {
+                        typingTextElement.textContent += '\n> Press start on the screen to play asteriod destroyer';
+                    }, 1000);
+                }
+            }, 50);
+            
+            // Play/Pause button
+            const playButton = document.getElementById('play-button');
+            const bgMusic = document.getElementById('bg-music');
+            let isPlaying = false;
+            
+            playButton.addEventListener('click', function() {
+                if (isPlaying) {
+                    bgMusic.pause();
+                    playButton.innerHTML = '<i class="fas fa-play"></i>';
+                } else {
+                    bgMusic.play();
+                    playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+                isPlaying = !isPlaying;
+            });
+            
+            // Mute/Unmute button
+            const muteButton = document.getElementById('mute-button');
+            let isMuted = true;
+            
+            muteButton.addEventListener('click', function() {
+                if (isMuted) {
+                    bgMusic.volume = 1;
+                    muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+                } else {
+                    bgMusic.volume = 0;
+                    muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                }
+                isMuted = !isMuted;
+            });
+        });
+    </script>
+
 
 </body>
 </html>

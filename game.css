@@ -1,0 +1,185 @@
+/* Game Container */
+.game-container {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    min-height: 500px;
+    margin: 20px 0;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+
+/* Game Overlay */
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10;
+    padding: 20px;
+    text-align: center;
+}
+
+.game-menu, .game-pause, .game-over {
+    background-color: rgba(15, 30, 45, 0.9);
+    border: 2px solid #00ff00;
+    border-radius: 8px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+}
+
+.game-title {
+    font-family: 'Press Start 2P', cursive;
+    color: #00ff00;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+}
+
+.game-description {
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+}
+
+.controls-info {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.controls-info p {
+    margin: 5px 0;
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+.btn-primary {
+    background-color: #00aa00;
+    border-color: #008800;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    padding: 10px 20px;
+    margin: 10px 5px;
+}
+
+.btn-primary:hover {
+    background-color: #00dd00;
+    border-color: #00aa00;
+}
+
+.btn-secondary {
+    background-color: #555;
+    border-color: #444;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    padding: 10px 20px;
+    margin: 10px 5px;
+}
+
+.btn-secondary:hover {
+    background-color: #777;
+    border-color: #666;
+}
+
+.high-score {
+    margin-top: 20px;
+    color: #ffcc00;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+}
+
+.score-display {
+    color: #ffcc00;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    margin: 20px 0;
+}
+
+/* HUD (Heads-Up Display) */
+.game-hud {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 5;
+    font-family: 'Press Start 2P', cursive;
+    color: #00ff00;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+}
+
+.score, .lives {
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+}
+
+.boost-meter {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.boost-label {
+    margin-right: 10px;
+    font-size: 0.8rem;
+}
+
+.boost-bar {
+    width: 100px;
+    height: 10px;
+    background-color: #333;
+    border: 1px solid #00ff00;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#boost-fill {
+    height: 100%;
+    width: 100%;
+    background-color: #00ff00;
+    transition: width 0.2s;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 1.5rem;
+    }
+    
+    .controls-info {
+        font-size: 0.7rem;
+    }
+    
+    .btn-primary, .btn-secondary {
+        font-size: 0.7rem;
+        padding: 8px 16px;
+    }
+    
+    .game-hud {
+        font-size: 0.7rem;
+    }
+}

@@ -1,36 +1,39 @@
 const setup2DSHeroModel = () => {
-    // Find the hero section
-    const heroSection = document.querySelector('.hero');
-    if (!heroSection) return;
+    // Find the logo container
+    const logoContainer = document.getElementById('logo-container');
+    if (!logoContainer) return;
     
-    // Create container for the 3D model
-    const modelContainer = document.createElement('div');
-    modelContainer.id = '2ds-model-container';
-    modelContainer.style.position = 'absolute';
-    modelContainer.style.width = '600px';
-    modelContainer.style.height = '600px';
-    modelContainer.style.top = '50%';
-    modelContainer.style.left = '50%';
-    modelContainer.style.transform = 'translate(-50%, -60%)'; // Offset slightly upwards
-    modelContainer.style.zIndex = '10';
+    // Use the logo container directly as our 3D model container
+    const modelContainer = logoContainer;
     
-    // Insert the container at the top of the hero section (before hero-overlay)
-    const heroOverlay = heroSection.querySelector('.hero-overlay');
-    if (heroOverlay) {
-      heroSection.insertBefore(modelContainer, heroOverlay);
-    } else {
-      heroSection.appendChild(modelContainer);
-    }
+    // Clear any existing content in the container
+    modelContainer.innerHTML = '';
     
     // Initialize Three.js
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    camera.position.set(0, 0, 8);
+    
+    // Calculate container aspect ratio
+    const containerWidth = modelContainer.clientWidth;
+    const containerHeight = modelContainer.clientHeight;
+    const aspectRatio = containerWidth / containerHeight;
+    
+    const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 1000);
+    // Adjust camera position based on container size
+    camera.position.set(0, 0, 6);
     
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(modelContainer.offsetWidth, modelContainer.offsetHeight);
+    renderer.setSize(containerWidth, containerHeight);
     renderer.setClearColor(0x000000, 0);
     modelContainer.appendChild(renderer.domElement);
+    
+    // Handle window resizing
+    window.addEventListener('resize', () => {
+        const newWidth = modelContainer.clientWidth;
+        const newHeight = modelContainer.clientHeight;
+        camera.aspect = newWidth / newHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(newWidth, newHeight);
+    });
     
     // Add lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -42,8 +45,15 @@ const setup2DSHeroModel = () => {
     
     // Create 2DS model
     const modelGroup = new THREE.Group();
-    modelGroup.scale.set(0.8, 0.8, 0.8); // Scale down the entire model
+    
+    // Calculate appropriate scale based on container size
+    // Smaller containers get a smaller model
+    const baseScale = Math.min(1, containerWidth / 800);
+    modelGroup.scale.set(baseScale * 0.6, baseScale * 0.6, baseScale * 0.6);
     scene.add(modelGroup);
+    
+    // Adjust model position to center in the container
+    modelGroup.position.y = -0.3;
     
     // Main body - EXPANDED to make space for controls on sides
     const bodyGeometry = new THREE.BoxGeometry(7, 3, 0.3);
@@ -318,7 +328,7 @@ const setup2DSHeroModel = () => {
       const intersects = raycaster.intersectObject(logoMesh);
       
       if (intersects.length > 0) {
-        window.location.href = 'items.html';
+        window.location.href = 'game.html';
       }
     });
     
