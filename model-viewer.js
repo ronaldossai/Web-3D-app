@@ -14,6 +14,11 @@ let clock = new THREE.Clock();
 let isModelLoading = false; // Flag to track if a model is currently loading
 let pendingModelType = null; // Store pending model load request
 
+// Audio variables
+let audioContext;
+let audioElements = {};
+let currentAudio = null;
+
 // Interactive feature variables
 let isExploded = false; // Track if model is in exploded view
 let isAnimating = false; // Track if model is animating
@@ -28,6 +33,14 @@ const modelPaths = {
     controller: 'models/retro_game_controller.glb',
     phone: 'models/iphone_15_white.glb',
     coke: 'models/cola-bottle.glb'
+};
+
+// Sound paths for each model
+const soundPaths = {
+    laptop: 'sounds/computer-sounds-25541.mp3',
+    controller: 'sounds/gaming-controller-28704.mp3',
+    phone: 'sounds/iphone-keyboard-typing-sound-effect-336778.mp3',
+    coke: 'sounds/open-24oz-soda-bottle-outdoors-long-fizz-explode-87403.mp3'
 };
 
 // Model-specific settings for proper positioning and scaling
@@ -71,6 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set canvas height based on device
     setResponsiveHeight();
     
+    // Initialize audio
+    initAudio();
+    
     // Create global function for model selection
     window.showModelSpecs = function(modelType) {
         console.log('Selecting model:', modelType);
@@ -78,8 +94,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update specifications display
         updateSpecsDisplay(modelType);
         
-        // Load the 3D model
-        loadModel(modelType);
+        // Load the 3D model first
+        loadModel(modelType, function() {
+            // Play sound for the selected model after model is loaded
+            playModelSound(modelType);
+        });
     };
     
     // Initialize 3D scene
@@ -89,8 +108,49 @@ document.addEventListener('DOMContentLoaded', function() {
     setupControls();
     
     // Load default model
-    loadModel('laptop');
+    loadModel('laptop', function() {
+        // Play sound for the default model after it's loaded
+        playModelSound('laptop');
+    });
 });
+
+/**
+ * Initialize audio elements for each model
+ */
+function initAudio() {
+    // Create audio elements for each model
+    for (const [model, soundPath] of Object.entries(soundPaths)) {
+        const audio = new Audio(soundPath);
+        audio.preload = 'auto';
+        audio.volume = 0.5; // Set default volume
+        audioElements[model] = audio;
+    }
+    
+    console.log('Audio initialized');
+}
+
+/**
+ * Play sound for the selected model
+ */
+function playModelSound(modelType) {
+    // Stop any currently playing audio
+    if (currentAudio && !currentAudio.paused) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+    
+    // Get the audio element for the selected model
+    const audio = audioElements[modelType];
+    if (audio) {
+        audio.currentTime = 0; // Reset to start
+        audio.play()
+            .then(() => console.log(`Playing sound for ${modelType}`))
+            .catch(err => console.error('Error playing sound:', err));
+        currentAudio = audio;
+    } else {
+        console.warn(`No sound found for model: ${modelType}`);
+    }
+}
 
 /**
  * Set responsive height based on device
@@ -434,8 +494,10 @@ function onWindowResize() {
 
 /**
  * Load 3D model
+ * @param {string} modelType - The type of model to load
+ * @param {Function} callback - Optional callback to run after model is loaded
  */
-function loadModel(modelType) {
+function loadModel(modelType, callback) {
     if (!modelType || !modelPaths[modelType]) {
         console.error(`Invalid model type: ${modelType}`);
         return;
@@ -551,6 +613,11 @@ function loadModel(modelType) {
                 // Reset loading flag
                 isModelLoading = false;
                 
+                // Execute callback if provided
+                if (typeof callback === 'function') {
+                    callback();
+                }
+                
                 // Check if there's a pending model to load
                 if (pendingModelType && pendingModelType !== modelType) {
                     const nextModel = pendingModelType;
@@ -658,7 +725,10 @@ function resetModel() {
         }
         
         // Reload the current model
-        loadModel(currentModelType);
+        loadModel(currentModelType, function() {
+            // Play sound for the model after it's loaded
+            playModelSound(currentModelType);
+        });
     }
 }
 
