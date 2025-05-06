@@ -19,14 +19,14 @@
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
      <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
-    <!-- Three.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+    <!-- Three.js CDN - switching to version that works with script tags -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/build/three.min.js"></script>
     
-    <!-- OrbitControls for camera manipulation -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- OrbitControls for camera manipulation - older version works better with script tags -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/controls/OrbitControls.js"></script>
     
-    <!-- GLTFLoader for 3D models -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- GLTFLoader for 3D models - older version works better with script tags -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body class="dark-theme">
 
@@ -34,7 +34,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="index.html">CTRL+<span class="brand-highlight"><span class="letter-l">L</span><span class="letter-i">I</span><span class="letter-f">F</span><span class="letter-e">E</span></span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -55,16 +55,16 @@
             <div class="col-md-3 model-selection">
                 <h3 class="text-center mb-4">Select Model</h3>
                 <div class="list-group">
-                    <button type="button" class="list-group-item list-group-item-action active" data-model="laptop">
-                        <i class="fas fa-laptop me-2"></i> Lenovo Legion 5
+                    <button type="button" class="list-group-item list-group-item-action active" data-model="laptop" onclick="window.showModelSpecs('laptop'); return false;">
+                        <i class="fas fa-laptop me-2"></i> Acer Nitro 5
                     </button>
-                    <button type="button" class="list-group-item list-group-item-action" data-model="controller">
-                        <i class="fas fa-gamepad me-2"></i> Xbox Controller
+                    <button type="button" class="list-group-item list-group-item-action" data-model="controller" onclick="window.showModelSpecs('controller'); return false;">
+                        <i class="fas fa-gamepad me-2"></i> Retro Controller
                     </button>
-                    <button type="button" class="list-group-item list-group-item-action" data-model="phone">
+                    <button type="button" class="list-group-item list-group-item-action" data-model="phone" onclick="window.showModelSpecs('phone'); return false;">
                         <i class="fas fa-mobile-alt me-2"></i> iPhone 15
                     </button>
-                    <button type="button" class="list-group-item list-group-item-action" data-model="coke">
+                    <button type="button" class="list-group-item list-group-item-action" data-model="coke" onclick="window.showModelSpecs('coke'); return false;">
                         <i class="fas fa-wine-bottle me-2"></i> Coke Bottle
                     </button>
                 </div>
@@ -90,11 +90,11 @@
                 <div class="mb-3">
                     <label class="form-label">Light Color</label>
                     <div class="d-flex justify-content-between">
-                        <button class="btn btn-sm light-color" data-color="#ffffff" style="background-color: #ffffff;"></button>
-                        <button class="btn btn-sm light-color" data-color="#ff5555" style="background-color: #ff5555;"></button>
-                        <button class="btn btn-sm light-color" data-color="#55ff55" style="background-color: #55ff55;"></button>
-                        <button class="btn btn-sm light-color" data-color="#5555ff" style="background-color: #5555ff;"></button>
-                        <button class="btn btn-sm light-color" data-color="#ffff55" style="background-color: #ffff55;"></button>
+                        <button class="btn btn-sm light-color" data-color="#ffffff" style="background-color: #ffffff;" title="White light"></button>
+                        <button class="btn btn-sm light-color" data-color="#ff5555" style="background-color: #ff5555;" title="Red light"></button>
+                        <button class="btn btn-sm light-color" data-color="#55ff55" style="background-color: #55ff55;" title="Green light"></button>
+                        <button class="btn btn-sm light-color" data-color="#5555ff" style="background-color: #5555ff;" title="Blue light"></button>
+                        <button class="btn btn-sm light-color" data-color="#ffff55" style="background-color: #ffff55;" title="Yellow light"></button>
                     </div>
                 </div>
             </div>
@@ -102,8 +102,8 @@
             <!-- 3D Canvas -->
             <div class="col-md-9">
                 <div id="model-info" class="mb-3">
-                    <h2 id="model-title">Lenovo Legion 5</h2>
-                    <p id="model-description">A powerful gaming laptop featuring AMD Ryzen processors and NVIDIA GeForce RTX graphics.</p>
+                    <h2 id="model-title">Acer Nitro 5</h2>
+                    <p id="model-description">A powerful gaming laptop featuring AMD Ryzen processors and NVIDIA GeForce GTX graphics. This bad boy not only eases his way through all of my computer science demands but is capable of delivering a smooth gaming experience. This is the machine that has guided me through my degree.</p>
                 </div>
                 <div id="3dCanvas">
                     <!-- Three.js will render here -->
@@ -114,14 +114,51 @@
                         <p class="mt-2">Loading 3D Model...</p>
                     </div>
                 </div>
+                
+                <!-- Controls -->
+                <div class="controls mt-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <h5>Environment</h5>
+                                <select id="environment-select" class="form-select">
+                                    <option value="default">Default Shader</option>
+                                    <option value="outdoor">Outdoor</option>
+                                    <option value="night">Night</option>
+                                    <option value="tech">Tech Lab</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Model Interaction -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h5>Model Interaction</h5>
+                            <button id="explode-view" class="btn btn-outline-success me-2">Explode View</button>
+                            <button id="toggle-animation" class="btn btn-outline-success me-2">Animate</button>
+                            <button id="toggle-parts" class="btn btn-outline-success me-2">Toggle Parts</button>
+                            <button id="reset-model" class="btn btn-outline-danger">Reset Model</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Part Selection for Interactive Models -->
+                    <div id="parts-selector" class="mt-3" style="display: none;">
+                        <h5>Model Parts</h5>
+                        <div id="parts-buttons" class="btn-group flex-wrap">
+                            <!-- Part buttons will be added dynamically -->
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="model-specs mt-3">
                     <div class="row" id="laptop-specs">
                         <div class="col-md-6">
                             <h4>Specifications</h4>
                             <ul>
-                                <li>AMD Ryzen 7 5800H Processor</li>
-                                <li>NVIDIA GeForce RTX 3060</li>
-                                <li>16GB DDR4 RAM</li>
+                                <li>AMD Ryzen 5 5600H Processor</li>
+                                <li>NVIDIA GeForce GTX 1650</li>
+                                <li>32GB DDR4 RAM</li>
                                 <li>1TB SSD Storage</li>
                                 <li>15.6" FHD 165Hz Display</li>
                             </ul>
@@ -132,7 +169,7 @@
                                 <li>Nahimic 3D Audio</li>
                                 <li>RGB Backlit Keyboard</li>
                                 <li>Coldfront 3.0 Cooling</li>
-                                <li>Legion TrueStrike Keyboard</li>
+                                <li>TrueStrike Keyboard</li>
                                 <li>Rapid Charge Pro</li>
                             </ul>
                         </div>
@@ -141,21 +178,18 @@
                         <div class="col-md-6">
                             <h4>Specifications</h4>
                             <ul>
-                                <li>Wireless Connectivity</li>
-                                <li>Bluetooth 5.0</li>
-                                <li>40+ Hour Battery Life</li>
-                                <li>USB-C Charging</li>
+                                <li>Wired Connectivity</li>
                                 <li>Textured Grip Surface</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
                             <h4>Features</h4>
                             <ul>
-                                <li>Impulse Triggers</li>
-                                <li>Hybrid D-pad</li>
+                                <li>Analog Triggers</li>
+                                <li>D-pad</li>
                                 <li>Button Mapping</li>
-                                <li>Low Latency Input</li>
-                                <li>Compatible with PC & Xbox</li>
+                                <li>Wired Input</li>
+                                <li>Compatible with PC</li>
                             </ul>
                         </div>
                     </div>
@@ -238,7 +272,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Link to custom JavaScript files -->
-    <script src="main.js"></script>
+    <script src="model-viewer.js"></script>
 
 </body>
 </html>

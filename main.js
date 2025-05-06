@@ -4,13 +4,14 @@ let activeModel = null;
 let isWireframe = false;
 let isRotating = true;
 let lights = [];
+let currentModelType = 'laptop'; // Track the currently selected model type
 
-// Model paths (you'll need to create these models)
+// Model paths updated to match what's actually available
 const modelPaths = {
-    laptop: 'models/lenovo_legion5.glb',
-    controller: 'models/xbox_controller.glb',
-    phone: 'models/iphone15.glb',
-    coke: 'models/coke_bottle.glb'
+    laptop: 'models/soda_can_crush.glb',  // For now, we'll use the soda can for all models
+    controller: 'models/soda_can_crush.glb',
+    phone: 'models/soda_can_opening.glb',
+    coke: 'models/soda_can_crush.glb'
 };
 
 // Model information
@@ -37,8 +38,13 @@ const modelInfo = {
 function init() {
     // Get the container element and its dimensions
     const container = document.getElementById('3dCanvas');
+    if (!container) {
+        console.error("3D Canvas container not found!");
+        return;
+    }
+    
     const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+    const containerHeight = container.clientHeight || 500; // Fallback height if element has no height
 
     // Create scene
     scene = new THREE.Scene();
@@ -54,6 +60,23 @@ function init() {
     renderer.setSize(containerWidth, containerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    
+    // Clear existing content before appending the renderer
+    container.innerHTML = '';
+    
+    // Add loading indicator
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.className = 'loading-indicator';
+    loadingIndicator.style.display = 'none';
+    loadingIndicator.innerHTML = `
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading 3D Model...</p>
+    `;
+    container.appendChild(loadingIndicator);
+    
+    // Append the renderer
     container.appendChild(renderer.domElement);
 
     // Add orbit controls
@@ -79,6 +102,14 @@ function init() {
 
 // Set up scene lighting
 function setupLighting() {
+    // Clear any existing lights
+    lights.forEach(light => {
+        if (light && scene) {
+            scene.remove(light);
+        }
+    });
+    lights = [];
+
     // Ambient light
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
@@ -114,63 +145,74 @@ function setupLighting() {
     scene.add(plane);
 }
 
+// Update model information in the UI
+function updateModelInfo(modelType) {
+    console.log('Updating model info for:', modelType);
+    
+    const titleElement = document.getElementById('model-title');
+    const descriptionElement = document.getElementById('model-description');
+    
+    if (titleElement && modelInfo[modelType]) {
+        titleElement.textContent = modelInfo[modelType].title;
+    }
+    
+    if (descriptionElement && modelInfo[modelType]) {
+        descriptionElement.textContent = modelInfo[modelType].description;
+    }
+}
+
 // Load 3D model
 function loadModel(modelType) {
+    console.log('Loading model:', modelType);
+    
+    if (!modelType || !modelPaths[modelType]) {
+        console.error(`Invalid model type: ${modelType}`);
+        return;
+    }
+
+    // Update the current model type
+    currentModelType = modelType;
+    
+    // Update model title and description
+    updateModelInfo(modelType);
+    
+    // Show loading indicator
+    const loadingIndicator = document.querySelector('.loading-indicator');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'flex';
+    }
+
     // Clear previous model if it exists
     if (activeModel) {
         scene.remove(activeModel);
         activeModel = null;
     }
 
-    // Show loading indicator (could be implemented as a spinner)
-    console.log('Loading model: ' + modelType);
-
-    // Update model info
-    document.getElementById('model-title').textContent = modelInfo[modelType].title;
-    document.getElementById('model-description').textContent = modelInfo[modelType].description;
-
-    // Hide all specs
-    document.querySelectorAll('[id$="-specs"]').forEach(el => el.style.display = 'none');
-    // Show the current model specs
-    document.getElementById(modelType + '-specs').style.display = 'flex';
-
     // GLTF loader
     const loader = new THREE.GLTFLoader();
-    
+    const modelPath = modelPaths[modelType];
+
+    // Load the model
     loader.load(
-        modelPaths[modelType],
+        modelPath,
         function (gltf) {
             // Model loaded successfully
             activeModel = gltf.scene;
-            
+
             // Position and scale model appropriately
             activeModel.position.set(0, 0, 0);
-            
-            // Apply appropriate scaling based on model type
-            if (modelType === 'laptop') {
-                activeModel.scale.set(1, 1, 1);
-                activeModel.position.y = -1;
-            } else if (modelType === 'controller') {
-                activeModel.scale.set(2, 2, 2);
-            } else if (modelType === 'phone') {
-                activeModel.scale.set(1.5, 1.5, 1.5);
-                activeModel.position.y = -0.5;
-            } else if (modelType === 'coke') {
-                activeModel.scale.set(1.2, 1.2, 1.2);
-                activeModel.position.y = -1.5;
-            }
+            activeModel.scale.set(2, 2, 2);
+            activeModel.position.y = -1;
 
             // Apply shadows to all meshes
             activeModel.traverse((node) => {
                 if (node.isMesh) {
                     node.castShadow = true;
                     node.receiveShadow = true;
-                    
+
                     // Store original material for wireframe toggle
                     node.userData.originalMaterial = node.material.clone();
-                    // Store original material for wireframe toggle
-                    node.userData.originalMaterial = node.material.clone();
-                    
+
                     // Apply wireframe if it's enabled
                     if (isWireframe) {
                         node.material.wireframe = true;
@@ -180,11 +222,16 @@ function loadModel(modelType) {
 
             // Add model to scene
             scene.add(activeModel);
-            
+
             // Reset camera position
             resetCamera();
+
+            // Hide loading indicator
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
             
-            console.log('Model loaded successfully');
+            console.log('Model loaded successfully:', modelType);
         },
         function (xhr) {
             // Loading progress
@@ -193,12 +240,17 @@ function loadModel(modelType) {
         function (error) {
             // Error loading model
             console.error('Error loading model:', error);
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
         }
     );
 }
 
 // Reset camera to default position
 function resetCamera() {
+    if (!camera || !controls) return;
+    
     camera.position.set(0, 1, 5);
     controls.target.set(0, 0, 0);
     controls.update();
@@ -206,10 +258,14 @@ function resetCamera() {
 
 // Handle window resize
 function onWindowResize() {
-    const container = document.getElementById('3dCanvas');
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+    if (!camera || !renderer) return;
     
+    const container = document.getElementById('3dCanvas');
+    if (!container) return;
+    
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight || 500;
+
     camera.aspect = containerWidth / containerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(containerWidth, containerHeight);
@@ -218,7 +274,7 @@ function onWindowResize() {
 // Toggle wireframe mode
 function toggleWireframe() {
     isWireframe = !isWireframe;
-    
+
     if (activeModel) {
         activeModel.traverse((node) => {
             if (node.isMesh) {
@@ -235,119 +291,161 @@ function toggleRotation() {
 
 // Set light intensity
 function setLightIntensity(intensity) {
-    lights.forEach(light => {
-        light.intensity = intensity;
-    });
+    const intensityValue = parseFloat(intensity);
     
-    document.getElementById('intensity-value').textContent = intensity.toFixed(1);
+    lights.forEach(light => {
+        if (light) {
+            light.intensity = intensityValue;
+        }
+    });
+
+    const intensityValueElement = document.getElementById('intensity-value');
+    if (intensityValueElement) {
+        intensityValueElement.textContent = intensityValue.toFixed(1);
+    }
 }
 
 // Set light color
 function setLightColor(color) {
     lights.forEach(light => {
-        light.color.set(color);
+        if (light) {
+            light.color.set(color);
+        }
     });
-    
+
     // Update active state on buttons
     document.querySelectorAll('.light-color').forEach(btn => {
         btn.classList.remove('active');
     });
-    
-    document.querySelector(`.light-color[data-color="${color}"]`).classList.add('active');
+
+    const activeColorButton = document.querySelector(`.light-color[data-color="${color}"]`);
+    if (activeColorButton) {
+        activeColorButton.classList.add('active');
+    }
 }
 
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
-    
+
     // Update controls
-    controls.update();
-    
+    if (controls) {
+        controls.update();
+    }
+
     // Rotate model if rotation is enabled
     if (isRotating && activeModel) {
         activeModel.rotation.y += 0.005;
     }
-    
-    // Render scene
-    renderer.render(scene, camera);
-}
 
-// Navigation between pages
-function showPage(pageName) {
-    // Hide all content sections
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.style.display = 'none';
-    });
-    
-    // Show hero section only for home page
-    document.getElementById('home-page').style.display = pageName === 'home' ? 'flex' : 'none';
-    
-    // Show selected content section
-    if (pageName !== 'home') {
-        document.getElementById(pageName + '-page').style.display = 'block';
+    // Render scene
+    if (renderer && scene && camera) {
+        renderer.render(scene, camera);
     }
-    
-    // Update active navigation link
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    document.querySelector(`.nav-link[data-page="${pageName}"]`).classList.add('active');
 }
 
 // Document ready - Initialize everything
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize 3D scene
-    init();
+    console.log('DOM Content Loaded - Initializing 3D Models Page');
     
-    // Event listener for model selection
-    document.querySelectorAll('.list-group-item').forEach(item => {
-        item.addEventListener('click', function() {
-            // Update active state
-            document.querySelectorAll('.list-group-item').forEach(btn => {
-                btn.classList.remove('active');
-            });
+    // Initialize 3D scene if we are on the items page
+    if (document.getElementById('3dCanvas')) {
+        console.log('3D Canvas found - initializing scene');
+        init();
+        
+        // Set up model selection buttons directly
+        setupModelButtons();
+        
+        // Set up other controls
+        setupControls();
+        
+        // Set default light color button as active
+        const defaultLightColorBtn = document.querySelector('.light-color[data-color="#ffffff"]');
+        if (defaultLightColorBtn) {
+            defaultLightColorBtn.classList.add('active');
+        }
+    }
+});
+
+// Set up model selection buttons
+function setupModelButtons() {
+    const modelButtons = document.querySelectorAll('.list-group-item');
+    console.log('Found model buttons:', modelButtons.length);
+    
+    modelButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const modelType = this.getAttribute('data-model');
+            console.log('Model button clicked:', modelType);
+            
+            // Update active class
+            modelButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
             
-            // Load selected model
-            loadModel(this.getAttribute('data-model'));
+            // Load the model
+            if (modelType) {
+                loadModel(modelType);
+                
+                // Update specs visibility
+                updateModelSpecs(modelType);
+            }
         });
     });
-    
-    // Event listener for wireframe toggle
-    document.getElementById('toggle-wireframe').addEventListener('click', toggleWireframe);
-    
-    // Event listener for rotation toggle
-    document.getElementById('toggle-rotation').addEventListener('click', toggleRotation);
-    
-    // Event listener for camera reset
-    document.getElementById('reset-camera').addEventListener('click', resetCamera);
-    
-    // Event listener for light intensity slider
-    document.getElementById('light-intensity').addEventListener('input', function() {
-        setLightIntensity(parseFloat(this.value));
-    });
-    
-    // Event listeners for light color buttons
-    document.querySelectorAll('.light-color').forEach(btn => {
+}
+
+// Set up other controls (wireframe, rotation, camera, lights)
+function setupControls() {
+    // Wireframe toggle
+    const toggleWireframeBtn = document.getElementById('toggle-wireframe');
+    if (toggleWireframeBtn) {
+        toggleWireframeBtn.addEventListener('click', toggleWireframe);
+    }
+
+    // Rotation toggle
+    const toggleRotationBtn = document.getElementById('toggle-rotation');
+    if (toggleRotationBtn) {
+        toggleRotationBtn.addEventListener('click', toggleRotation);
+    }
+
+    // Camera reset
+    const resetCameraBtn = document.getElementById('reset-camera');
+    if (resetCameraBtn) {
+        resetCameraBtn.addEventListener('click', resetCamera);
+    }
+
+    // Light intensity slider
+    const lightIntensitySlider = document.getElementById('light-intensity');
+    if (lightIntensitySlider) {
+        lightIntensitySlider.addEventListener('input', function() {
+            setLightIntensity(this.value);
+        });
+    }
+
+    // Light color buttons
+    document.querySelectorAll('.light-color[data-color]').forEach(btn => {
         btn.addEventListener('click', function() {
-            setLightColor(this.getAttribute('data-color'));
+            const color = this.getAttribute('data-color');
+            if (color) {
+                setLightColor(color);
+            }
         });
     });
+}
+
+// Update model specifications visibility
+function updateModelSpecs(modelType) {
+    console.log('Updating specs for model:', modelType);
     
-    // Event listener for navigation
-    document.querySelectorAll('[data-page]').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            showPage(this.getAttribute('data-page'));
-        });
+    // Hide all specs sections
+    document.querySelectorAll('[id$="-specs"]').forEach(el => {
+        el.style.display = 'none';
     });
     
-    // Event listener for Explore Models button
-    document.getElementById('explore-models').addEventListener('click', function() {
-        showPage('models');
-    });
-    
-    // Set default light color button as active
-    document.querySelector('.light-color[data-color="#ffffff"]').classList.add('active');
-});
+    // Show current model specs
+    const specsElement = document.getElementById(modelType + '-specs');
+    if (specsElement) {
+        console.log('Showing specs for:', modelType);
+        specsElement.style.display = 'flex';
+    } else {
+        console.warn('Specs element not found for:', modelType);
+    }
+}

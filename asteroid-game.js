@@ -15,6 +15,14 @@ let gameOverlay, gameMenu, gamePause, gameOver;
 let highScore = localStorage.getItem('asteroidDodgerHighScore') || 0;
 let canvasContainer;
 
+// Audio variables
+let backgroundMusic = new Audio('assets/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3');
+let gameOverSound = new Audio('assets/game-over-arcade-6435.mp3');
+let rocketBoostSound = new Audio('assets/rocket-launch-sfx-253937.mp3');
+let hitSound = new Audio('assets/bubble-pop-3-320977.mp3');
+backgroundMusic.loop = true;
+rocketBoostSound.loop = true;
+
 // Initialize the game
 function init() {
     // Get DOM elements
@@ -218,15 +226,15 @@ function createShip() {
     scene.add(ship);
 }
 
-// Create asteroid
+// Create asteroid with improved random generation
 function createAsteroid() {
-    // Random size
-    const size = Math.random() * 0.5 + 0.2;
+    // Random size - slightly larger range for variety
+    const size = Math.random() * 0.6 + 0.2;
     
     // Random shape using icosahedron geometry with noise
     const asteroidGeometry = new THREE.IcosahedronGeometry(size, 1);
     
-    // Apply random "bumpiness" to vertices
+    // Apply random bumpiness to vertices
     const positions = asteroidGeometry.attributes.position;
     
     for (let i = 0; i < positions.count; i++) {
@@ -234,7 +242,7 @@ function createAsteroid() {
         const y = positions.getY(i);
         const z = positions.getZ(i);
         
-        const noise = (Math.random() - 0.5) * 0.2;
+        const noise = (Math.random() - 0.5) * 0.3; // Increased noise for more varied shapes
         positions.setXYZ(
             i,
             x * (1 + noise),
@@ -243,33 +251,39 @@ function createAsteroid() {
         );
     }
     
-    // Random gray color
+    // Random gray color with slight color variation
     const grayScale = Math.random() * 0.5 + 0.2;
+    const redTint = Math.random() * 0.1; 
     const asteroidMaterial = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(grayScale, grayScale, grayScale),
+        color: new THREE.Color(grayScale + redTint, grayScale, grayScale),
         roughness: 1,
         metalness: 0.3
     });
     
     const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
     
-    // Random position at distance from player
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 20;
-    asteroid.position.x = Math.sin(angle) * distance * (Math.random() * 0.5 + 0.5);
-    asteroid.position.y = (Math.random() - 0.5) * 6;
-    asteroid.position.z = -distance;
+    // Spawn asteroids within the ship's flight area (x: -5 to 5, y: -3 to 3)
+    // or just slightly outside to ensure they're visible and challenging
+    
+    // X position: between -7 and 7 (slightly wider than ship's bounds)
+    asteroid.position.x = (Math.random() * 14) - 7;
+    
+    // Y position: between -5 and 5 (slightly wider than ship's bounds)
+    asteroid.position.y = (Math.random() * 10) - 5;
+    
+    // Z position: start from a fixed distance away
+    asteroid.position.z = -30 - Math.random() * 10;
     
     // Random rotation
     asteroid.rotation.x = Math.random() * Math.PI;
     asteroid.rotation.y = Math.random() * Math.PI;
     asteroid.rotation.z = Math.random() * Math.PI;
     
-    // Random velocity
+    // More balanced velocity
     asteroid.velocity = new THREE.Vector3(
-        (Math.random() - 0.5) * 0.05,
-        (Math.random() - 0.5) * 0.05,
-        (Math.random() * 0.3) + 0.1
+        (Math.random() - 0.5) * 0.04,
+        (Math.random() - 0.5) * 0.04,
+        (Math.random() * 0.2) + 0.08 // Slightly slower but more consistent forward speed
     );
     
     // Random rotation velocity
@@ -287,42 +301,51 @@ function createAsteroid() {
 
 // Start the game
 function startGame() {
+    // Hide menus
+    gameOverlay.style.display = 'none';
+    gameMenu.style.display = 'none';
+    gamePause.style.display = 'none';
+    gameOver.style.display = 'none';
+    
+    // Set game state
     gameActive = true;
     isGameOver = false;
-    score = 0;
-    lives = 3;
-    boostEnergy = 100;
-    updateHUD();
-    
-    // Hide menu, show game
-    gameOverlay.style.display = 'none';
+    paused = false;
     
     // Reset the clock to prevent large delta on first frame
     clock.start();
     
-    // Start the game loop
+    // Start animation loop and music
     animate();
+    backgroundMusic.currentTime = 0;
+    backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
     
     // Start spawning asteroids
     spawnAsteroids();
     
-    // Update boost bar initial state
+    // Update HUD
+    updateHUD();
     updateBoostBar();
-    
-    console.log("Game started"); // Debug log
 }
 
 // Toggle pause state
 function togglePause() {
-    paused = !paused;
-    
-    if (paused) {
-        gameOverlay.style.display = 'flex';
-        gameMenu.classList.add('hidden');
-        gamePause.classList.remove('hidden');
-        gameOver.classList.add('hidden');
-    } else {
-        gameOverlay.style.display = 'none';
+    if (gameActive) {
+        paused = !paused;
+        if (paused) {
+            gameOverlay.style.display = 'flex';
+            gameMenu.style.display = 'none';
+            gamePause.style.display = 'block';
+            gameOver.style.display = 'none';
+            if (!rocketBoostSound.paused) {
+                rocketBoostSound.pause();
+            }
+            backgroundMusic.pause();
+        } else {
+            gameOverlay.style.display = 'none';
+            gamePause.style.display = 'none';
+            backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
+        }
     }
 }
 
@@ -333,22 +356,42 @@ function resumeGame() {
     
     // Reset the clock to prevent large delta on resume
     clock.start();
+    
+    // Restart asteroid spawning
+    spawnAsteroids();
 }
 
 // Restart game
 function restartGame() {
-    // Remove all asteroids
-    for (let i = asteroids.length - 1; i >= 0; i--) {
-        scene.remove(asteroids[i]);
-    }
+    // Reset game variables
+    score = 0;
+    lives = 3;
+    boostEnergy = 100;
+    isGameOver = false;
+    paused = false;
+    
+    // Clear asteroids
+    asteroids.forEach(asteroid => scene.remove(asteroid));
     asteroids = [];
     
     // Reset ship position
     ship.position.set(0, 0, 0);
     shipVelocity.set(0, 0, 0);
     
-    // Start the game
-    startGame();
+    // Show start menu
+    gameOverlay.style.display = 'flex';
+    gameMenu.style.display = 'block';
+    gamePause.style.display = 'none';
+    gameOver.style.display = 'none';
+    
+    // Reset music
+    gameOverSound.pause();
+    gameOverSound.currentTime = 0;
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+    
+    // Reset game state
+    gameActive = false;
 }
 
 // Game Over
@@ -365,22 +408,34 @@ function handleGameOver() {
         document.getElementById('high-score').textContent = highScore;
     }
     
+    // Stop background music and play game over sound
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+    gameOverSound.play().catch(e => console.log('Audio play failed:', e));
+    
+    // Show only game over menu, hide other menus
     gameOverlay.style.display = 'flex';
-    gameMenu.classList.add('hidden');
-    gamePause.classList.add('hidden');
-    gameOver.classList.remove('hidden');
+    gameMenu.style.display = 'none';
+    gamePause.style.display = 'none';
+    gameOver.style.display = 'block';
+    
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('new-high-score').style.display = 
+        score > highScore ? 'block' : 'none';
 }
 
-// Spawn asteroids periodically
+// Spawn asteroids periodically with improved spawn rate
 function spawnAsteroids() {
-    if (!gameActive) return;
+    // Don't spawn asteroids if game is not active or is paused
+    if (!gameActive || paused) return;
     
     createAsteroid();
     
-    // Spawn rate increases with score
+    // Spawn rate increases with score but with a more gradual curve
     const baseDelay = 2000;
-    const minDelay = 200;
-    const spawnRate = Math.max(minDelay, baseDelay - (score * 10));
+    const minDelay = 300; // Slightly higher minimum delay
+    // Divide score by 20 to make the progression more gradual
+    const spawnRate = Math.max(minDelay, baseDelay - (score / 20));
     
     setTimeout(spawnAsteroids, spawnRate);
 }
@@ -389,12 +444,13 @@ function spawnAsteroids() {
 function update() {
     if (!gameActive || paused) return;
     
-    const delta = Math.min(clock.getDelta(), 0.1); // Cap delta time to prevent large jumps
+    // Get time delta
+    const delta = clock.getDelta();
     
-    // Update ship position based on controls
+    // Update ship controls
     updateShipControls(delta);
     
-    // Move asteroids
+    // Update asteroids
     updateAsteroids(delta);
     
     // Check for collisions
@@ -408,6 +464,11 @@ function update() {
     if (!boosting && boostEnergy < 100) {
         boostEnergy = Math.min(100, boostEnergy + boostRecoveryRate);
         updateBoostBar();
+    }
+    
+    // Ensure background music is playing during gameplay
+    if (backgroundMusic.paused && !isGameOver) {
+        backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
     }
 }
 
@@ -425,6 +486,11 @@ function updateShipControls(delta) {
         currentMaxSpeed = maxSpeed;
         boostEnergy = Math.max(0, boostEnergy - boostConsumptionRate);
         updateBoostBar();
+        
+        // Play rocket boost sound
+        if (rocketBoostSound.paused) {
+            rocketBoostSound.play().catch(e => console.log('Audio play failed:', e));
+        }
         
         // Add engine flame/light effect - find engine lights in our ship model
         // Look for engine parts which are at index 7 and 8 in our ship model
@@ -465,6 +531,12 @@ function updateShipControls(delta) {
             if (leftEngine.children[0]) leftEngine.children[0].color = normalColor;
             if (rightEngine.children[0]) rightEngine.children[0].color = normalColor;
         }
+        
+        // Stop rocket boost sound
+        if (!rocketBoostSound.paused) {
+            rocketBoostSound.pause();
+            rocketBoostSound.currentTime = 0;
+        }
     }
     
     // Handle movement - supports both WASD and arrow keys
@@ -495,7 +567,7 @@ function updateShipControls(delta) {
     ship.position.y = THREE.MathUtils.clamp(ship.position.y, -3, 3);
 }
 
-// Update asteroids
+// Update asteroids with improved movement patterns
 function updateAsteroids(delta) {
     for (let i = asteroids.length - 1; i >= 0; i--) {
         const asteroid = asteroids[i];
@@ -503,13 +575,35 @@ function updateAsteroids(delta) {
         // Move asteroid
         asteroid.position.add(asteroid.velocity);
         
+        // Add slight random variation to asteroid paths (subtle turbulence)
+        if (Math.random() < 0.03) { // 3% chance per frame to adjust course slightly
+            asteroid.velocity.x += (Math.random() - 0.5) * 0.01;
+            asteroid.velocity.y += (Math.random() - 0.5) * 0.01;
+        }
+        
+        // Keep asteroids from drifting too far sideways
+        if (Math.abs(asteroid.velocity.x) > 0.1) {
+            asteroid.velocity.x *= 0.98;
+        }
+        if (Math.abs(asteroid.velocity.y) > 0.1) {
+            asteroid.velocity.y *= 0.98;
+        }
+        
         // Rotate asteroid
         asteroid.rotation.x += asteroid.rotationVelocity.x;
         asteroid.rotation.y += asteroid.rotationVelocity.y;
         asteroid.rotation.z += asteroid.rotationVelocity.z;
         
-        // Remove asteroids that are behind the player
-        if (asteroid.position.z > 5) {
+        // Remove asteroids that are behind the player or too far to sides
+        if (asteroid.position.z > 5 || 
+            Math.abs(asteroid.position.x) > 30 || 
+            Math.abs(asteroid.position.y) > 30) {
+            // Award points if asteroid passes behind the player (successfully dodged)
+            if (asteroid.position.z > 5) {
+                // Award exactly 1 point for each dodged asteroid
+                score += 1;
+                updateHUD();
+            }
             scene.remove(asteroid);
             asteroids.splice(i, 1);
         }
@@ -534,10 +628,11 @@ function checkCollisions() {
     }
 }
 
-// Handle collision
+// Fixed collision handler that properly flashes the ship body
 function handleCollision(asteroid, index) {
-    // Play sound
-    playSound('hit-sound');
+    // Play bubble pop sound for hit
+    hitSound.currentTime = 0;
+    hitSound.play().catch(e => console.log('Audio play failed:', e));
     
     // Remove the asteroid
     scene.remove(asteroid);
@@ -547,11 +642,17 @@ function handleCollision(asteroid, index) {
     lives--;
     updateHUD();
     
-    // Flash the ship to indicate damage
-    ship.material.emissive.setRGB(1, 0, 0);
-    setTimeout(() => {
-        ship.material.emissive.setRGB(0, 0.5, 0);
-    }, 200);
+    // Flash the ship to indicate damage - find the body which is the first child
+    if (ship.children[0]) {
+        const shipBody = ship.children[0];
+        if (shipBody.material) {
+            const originalEmissive = shipBody.material.emissive.clone();
+            shipBody.material.emissive.setRGB(1, 0, 0);
+            setTimeout(() => {
+                shipBody.material.emissive.copy(originalEmissive);
+            }, 200);
+        }
+    }
     
     // Check for game over
     if (lives <= 0) {

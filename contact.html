@@ -51,21 +51,21 @@
                         <div class="contact-info-card">
                             <i class="fas fa-envelope fa-3x mb-3 text-primary"></i>
                             <h5>Email</h5>
-                            <p>info@ctrllife.com</p>
+                            <p>ro@sussex.ac.uk</p>
                         </div>
                     </div>
                     <div class="col-md-4 text-center mb-4 mb-md-0">
                         <div class="contact-info-card">
                             <i class="fas fa-map-marker-alt fa-3x mb-3 text-primary"></i>
                             <h5>Location</h5>
-                            <p>Tech Campus, Digital Avenue</p>
+                            <p>U.K.</p>
                         </div>
                     </div>
                     <div class="col-md-4 text-center">
                         <div class="contact-info-card">
                             <i class="fas fa-phone fa-3x mb-3 text-primary"></i>
                             <h5>Phone</h5>
-                            <p>+1 (555) 123-4567</p>
+                            <p>+44 .......... </p>
                         </div>
                     </div>
                 </div>
@@ -76,15 +76,15 @@
                         <form id="contact-form" action="contact.php" method="POST">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" placeholder="Your Name" required>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="your.email@example.com" required>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="your.email@example.com" required>
                             </div>
                             <div class="mb-3">
                                 <label for="subject" class="form-label">Subject</label>
-                                <select class="form-select" id="subject" required>
+                                <select class="form-select" id="subject" name="subject" required>
                                     <option value="" selected disabled>Select a subject</option>
                                     <option value="general">General Inquiry</option>
                                     <option value="support">Technical Support</option>
@@ -94,7 +94,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" rows="5" placeholder="Your message here..." required></textarea>
+                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Your message here..." required></textarea>
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">
@@ -150,23 +150,49 @@
     <script>
         document.getElementById('contact-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            // Simulate form submission
-            const submitBtn = this.querySelector('button[type="submit"]');
+            const form = this;
+            const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
             
-            // Simulate processing time
-            setTimeout(() => {
-                // Show success message
-                this.innerHTML = `
-                    <div class="alert alert-success" role="alert">
-                        <h4 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Message Sent!</h4>
-                        <p>Thank you for contacting us. We'll get back to you as soon as possible.</p>
+            // Create FormData object
+            const formData = new FormData(form);
+            
+            // Send form data to PHP
+            fetch('contact.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    form.innerHTML = `
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Message Sent!</h4>
+                            <p>${data.message}</p>
+                        </div>
+                    `;
+                } else {
+                    form.innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i>Error</h4>
+                            <p>${data.message}</p>
+                            <button type="button" class="btn btn-secondary mt-3" onclick="window.location.reload()">Try Again</button>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                form.innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i>Error</h4>
+                        <p>An error occurred while sending your message. Please try again later.</p>
+                        <button type="button" class="btn btn-secondary mt-3" onclick="window.location.reload()">Try Again</button>
                     </div>
                 `;
-            }, 1500);
+            });
         });
     </script>
 

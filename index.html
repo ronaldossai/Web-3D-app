@@ -27,7 +27,8 @@
     
     <!-- GLTFLoader for 3D models -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/loaders/GLTFLoader.js"></script>
-    
+
+    <!-- Add particle system styles -->
     <style>
         /* Additional styles for the redesigned home page */
         .minimal-nav {
@@ -40,6 +41,7 @@
             text-align: center;
             background-color: rgba(10, 10, 15, 0.7);
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
         
         .minimal-nav a {
@@ -62,13 +64,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80%;
+            width: 90%;
             max-width: 900px;
-            height: 60vh;
-            border: 2px solid #00ff00;
+            height: 70vh;
+            min-height: 400px;
+            border: 3px solid #00ff00;
             border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.85);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
             overflow: hidden;
             padding: 20px;
             display: flex;
@@ -83,8 +86,9 @@
             padding-bottom: 10px;
             margin-bottom: 20px;
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.7rem;
+            font-size: 0.9rem;
             color: #00ff00;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
             display: flex;
             justify-content: space-between;
         }
@@ -129,8 +133,9 @@
         
         .social-icons a {
             color: #00ff00;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             transition: transform 0.3s, text-shadow 0.3s;
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
         }
         
         .social-icons a:hover {
@@ -142,6 +147,10 @@
             font-family: 'Press Start 2P', cursive;
             font-size: 0.9rem;
             color: #00ff00;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+            margin-top: 10px;
+            padding: 0 10px;
+            width: 100%;
         }
         
         #play-button, #mute-button {
@@ -156,6 +165,7 @@
             justify-content: center;
             align-items: center;
             transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
         }
         
         #play-button:hover, #mute-button:hover {
@@ -165,8 +175,9 @@
         
         .copyright {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.6rem;
-            color: #444;
+            font-size: 0.7rem;
+            color: #999;
+            text-shadow: 0 0 5px rgba(153, 153, 153, 0.3);
         }
         
         .hero {
@@ -176,6 +187,158 @@
             width: 100%;
             height: 100vh;
             z-index: -1;
+        }
+        
+        /* Add responsive styles for smaller screens */
+        @media (max-width: 768px) {
+            .console-container {
+                width: 95%;
+                height: 80vh;
+                padding: 15px;
+                border-width: 2px;
+            }
+            
+            .console-header {
+                font-size: 0.7rem;
+            }
+            
+            #logo-container {
+                height: 200px;
+            }
+            
+            .social-icons {
+                gap: 20px;
+            }
+            
+            .social-icons a {
+                font-size: 1.4rem;
+                text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+            }
+            
+            .console-typing {
+                font-size: 0.8rem;
+            }
+            
+            .minimal-nav a {
+                margin: 0 8px;
+                font-size: 0.7rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .console-container {
+                height: 70vh;
+                padding: 10px;
+            }
+            
+            .console-header {
+                font-size: 0.6rem;
+                padding-bottom: 8px;
+                margin-bottom: 10px;
+            }
+            
+            #logo-container {
+                height: 150px;
+            }
+            
+            .social-icons {
+                gap: 15px;
+            }
+            
+            .social-icons a {
+                font-size: 1.3rem;
+                text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+            }
+            
+            .console-typing {
+                font-size: 0.7rem;
+            }
+            
+            .minimal-nav {
+                padding: 10px 0;
+            }
+            
+            .minimal-nav a {
+                margin: 0 5px;
+                font-size: 0.6rem;
+            }
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .crt-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+
+        .glitch-effect {
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .glitch-effect:hover {
+            text-shadow: 2px 0 #00ff00, -2px 0 #ff00ff;
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .command-prompt {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border: 1px solid #00ff00;
+            font-family: 'Press Start 2P', cursive;
+            color: #00ff00;
+            width: 300px;
+        }
+
+        .command-prompt input {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Press Start 2P', cursive;
+            width: 100%;
+            outline: none;
+        }
+
+        .command-prompt input::placeholder {
+            color: rgba(0, 255, 0, 0.5);
         }
     </style>
 </head>
@@ -228,10 +391,10 @@
 
     <!-- Media Controls -->
     <div class="media-controls">
-        <button id="play-button">
+        <button id="play-button" aria-label="Play or pause background music" title="Play/Pause">
             <i class="fas fa-play"></i>
         </button>
-        <button id="mute-button">
+        <button id="mute-button" aria-label="Mute or unmute background music" title="Mute/Unmute">
             <i class="fas fa-volume-up"></i>
         </button>
     </div>
@@ -248,6 +411,16 @@
     <!-- Three.js LOGO -->
     <script src="hero-title.js"></script>
     
+    <!-- Add particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    
+
+    <!-- Add CRT effect overlay -->
+    <div class="crt-effect"></div>
+
+    <!-- Add particles container -->
+    <div id="particles-js"></div>
+
     <!-- Updated Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -263,21 +436,36 @@
             
             // Typing effect
             const typingTextElement = document.getElementById('typing-text');
-            const welcomeText = typingTextElement.textContent;
+            const welcomeText = '> Welcome to CTRL+LIFE, your digital man cave';
+            const secondLine = '\n> Press start on the screen to play asteriod destroyer';
             typingTextElement.textContent = '';
             
             let i = 0;
-            const typingInterval = setInterval(() => {
+            function typeWelcomeText() {
                 if (i < welcomeText.length) {
                     typingTextElement.textContent += welcomeText.charAt(i);
                     i++;
+                    setTimeout(typeWelcomeText, 50);
                 } else {
-                    clearInterval(typingInterval);
-                    setTimeout(() => {
-                        typingTextElement.textContent += '\n> Press start on the screen to play asteriod destroyer';
-                    }, 1000);
+                    // After welcome text is done, wait and then type the second line
+                    setTimeout(typeSecondLine, 1000);
                 }
-            }, 50);
+            }
+            
+            function typeSecondLine() {
+                let j = 0;
+                const typeInterval = setInterval(() => {
+                    if (j < secondLine.length) {
+                        typingTextElement.textContent += secondLine.charAt(j);
+                        j++;
+                    } else {
+                        clearInterval(typeInterval);
+                    }
+                }, 50);
+            }
+            
+            // Start the typing animation
+            typeWelcomeText();
             
             // Play/Pause button
             const playButton = document.getElementById('play-button');
@@ -309,9 +497,88 @@
                 }
                 isMuted = !isMuted;
             });
+
+            // Initialize particles
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: '#00ff00' },
+                    shape: { type: 'circle' },
+                    opacity: {
+                        value: 0.5,
+                        random: true,
+                        animation: { enable: true, speed: 1, minimumValue: 0.1, sync: false }
+                    },
+                    size: {
+                        value: 3,
+                        random: true,
+                        animation: { enable: true, speed: 2, minimumValue: 0.1, sync: false }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#00ff00',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: 'none',
+                        random: true,
+                        straight: false,
+                        outMode: 'out',
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detectOn: 'canvas',
+                    events: {
+                        onHover: { enable: true, mode: 'repulse' },
+                        onClick: { enable: true, mode: 'push' },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
+
+            // Command prompt functionality
+            const commandInput = document.getElementById('command-input');
+            const commands = {
+                help: 'Available commands: help, about, models, contact, clear',
+                about: 'Redirecting to about page...',
+                models: 'Redirecting to models page...',
+                contact: 'Redirecting to contact page...',
+                clear: () => { commandInput.value = ''; return 'Console cleared.'; }
+            };
+
+            commandInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const command = this.value.toLowerCase().trim();
+                    if (commands[command]) {
+                        if (typeof commands[command] === 'function') {
+                            console.log(commands[command]());
+                        } else {
+                            console.log(commands[command]);
+                            if (command !== 'help' && command !== 'clear') {
+                                setTimeout(() => {
+                                    window.location.href = command + '.html';
+                                }, 1000);
+                            }
+                        }
+                    } else {
+                        console.log('Command not found. Type "help" for available commands.');
+                    }
+                    this.value = '';
+                }
+            });
+
+            // Add glitch effect to navigation links
+            document.querySelectorAll('.minimal-nav a').forEach(link => {
+                link.classList.add('glitch-effect');
+            });
         });
     </script>
-
 
 </body>
 </html>
