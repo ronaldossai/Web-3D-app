@@ -1,4 +1,4 @@
-# Web 3D Application
+# Web 3D Application: CTRL + LIFE
 
 A 3D web application featuring interactive models of a gaming controller, smartphone, gaming laptop, and bottle. Built using Three.js.
 
